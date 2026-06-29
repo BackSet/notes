@@ -1,34 +1,101 @@
 # Project Instructions & Guidelines
 
-## General Workflows
-1. **Security & Secrets**:
-   - Never commit actual secrets or credentials to Git.
-   - All sensitive configurations must be loaded via environment variables.
-   - Fallbacks in `application.properties` are allowed for local development only.
+## 1. Identidad del Proyecto y Entorno `[verificado en Git]`
+* **Proyecto**: `notes`
+* **Repositorio**: `BackSet/notes`
+* **Rama Base**: `dev`
+* **Entorno**: Desarrollo local / Producción en Railway
+* **Rol del Agente**: Asistente de codificación AI (Antigravity), actuando como Agente de Implementación Senior en pareja con el usuario.
 
-2. **Database Migrations**:
-   - Use Flyway for all database schema changes.
-   - Do not use `ddl-auto=update` in production; keep it as `validate`.
-   - Migration files must be named using the format `V[Version]__[Description].sql` under `backend/src/main/resources/db/migration/`.
+---
 
-## Backend Guidelines
-- Keep controllers thin; delegate business logic to services.
-- Always validate incoming requests using `@Valid` and standard validation annotations.
-- Document APIs using Springdoc OpenAPI annotations.
-- Write unit tests for services and integration tests for controllers.
+## 2. Fuentes de Verdad `[verificado en documentación]`
+Para cualquier implementación técnica o consulta, se debe priorizar la información en el siguiente orden:
+1. Código fuente real del repositorio en la rama `dev`.
+2. Archivos de configuración y manifiestos de dependencias ([backend/pom.xml](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/backend/pom.xml), [frontend/package.json](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/frontend/package.json)).
+3. Guías de despliegue y variables de entorno ([docs/despliegue/RAILWAY_PRODUCCION_GUIA.md](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/docs/despliegue/RAILWAY_PRODUCCION_GUIA.md), [docs/despliegue/VARIABLES_ENTORNO.md](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/docs/despliegue/VARIABLES_ENTORNO.md)).
+4. Archivos de contexto de la carpeta `docs/ai/`.
 
-## Frontend Guidelines
-- **HTTP Client**: Do not use Axios. Use the central `openapi-fetch` client located in `src/lib/api/client.ts`.
-- **Styling**: Use Tailwind CSS with the design system tokens defined in `src/index.css`. Do not use hex colors directly in components.
-- **Routing**: Use TanStack Router for type-safe routing.
-- **State Management**: Use Zustand for lightweight global state and TanStack Query for server-state caching.
-- **Form Handling**: Use React Hook Form with Zod schema validation via `@hookform/resolvers/zod`.
-- **Transitions**: Avoid `transition-all`. Use specific transition properties (e.g., `transition-colors`, `transition-opacity`) to optimize performance and prevent layout shifts.
-- **Responsiveness**: Design mobile-first and prevent global horizontal scrolling.
+---
 
-## Deployment Guidelines (Railway)
-- Do not modify `Dockerfile` or `railway.json` files without verifying local compilation.
-- Ensure `VITE_API_BASE_URL` is passed as a build-time argument in the frontend Dockerfile.
-- The frontend Caddyfile must maintain its security headers, compression, and SPA routing fallback.
-- In production, always ensure that `CORS_ALLOWED_ORIGINS` in the backend matches the production URL of the frontend.
+## 3. Reglas de Aislamiento y Restricciones `[verificado en documentación]`
+* **Aislamiento**: No interactuar ni modificar archivos fuera del alcance definido por la tarea del usuario.
+* **Seguridad**: Está estrictamente prohibido versionar claves secretas, contraseñas o tokens reales. Usa siempre variables de entorno y documenta en `.env.example`.
+* **Código Funcional**: No modificar ni refactorizar código funcional existente a menos que sea explícitamente solicitado para corregir un bug o implementar una característica.
+* **Migraciones**: Las migraciones de base de datos creadas históricamente por Flyway en `db/migration/` son inmutables. Nunca edites un archivo de migración ya aplicado.
+* **Dependencias**: No agregues nuevas dependencias de terceros sin evaluar primero si la funcionalidad se puede lograr con las librerías ya instaladas.
 
+---
+
+## 4. Obligación de Mantenimiento de Contexto
+Después de cada ciclo de implementación o cambio en el repositorio, el Agente tiene la **obligación estricta** de:
+1. Revisar si el cambio afecta la arquitectura, el mapa de módulos, las convenciones de nombres o las instrucciones del proyecto.
+2. Actualizar los correspondientes archivos de contexto en `docs/ai/` (`PROJECT_CONTEXT.md`, `MODULE_MAP.md`, `NAMING.md`, `PROJECT_INSTRUCTIONS.md`).
+3. Asegurar que no quede documentación desactualizada.
+
+---
+
+## 5. Formato de Reporte Final Obligatorio
+Al finalizar cualquier tarea de desarrollo o inicialización, el Agente debe entregar un reporte estructurado con la siguiente información:
+1. Rama revisada.
+2. Archivos creados o actualizados.
+3. Archivos canónicos revisados sin cambios, si aplica.
+4. Fuentes del repositorio revisadas.
+5. Decisiones importantes tomadas.
+6. Contradicciones o desalineaciones detectadas.
+7. Datos pendientes de confirmar.
+8. Comandos ejecutados y resultados.
+9. Pruebas no ejecutadas y motivo.
+10. Riesgos y pendientes.
+11. Confirmación de que no hubo cambios fuera del alcance.
+
+---
+
+## 6. Protocolo de Continuidad
+Si una sesión de desarrollo se interrumpe antes de completar la tarea (por límite de contexto, expiración de tokens, etc.), el Agente **no debe declarar la tarea como terminada**. En su lugar, debe entregar el siguiente bloque estructurado en su último mensaje:
+
+```markdown
+RESUMEN DE CONTINUIDAD
+
+Proyecto: notes
+Repo: BackSet/notes
+Rama: dev
+Iteración: [Nombre de la iteración]
+
+Objetivo actual:
+[Descripción del objetivo]
+
+Estado:
+[no iniciado | en progreso | bloqueado | casi completo]
+
+Completado y validado:
+* [Logro 1]
+
+Archivos modificados y propósito:
+* [ruta]: [propósito]
+
+Comandos y pruebas ejecutados:
+* [comando]: [resultado]
+
+Cambios parciales que no deben considerarse terminados:
+* [detalle]
+
+Pendientes en orden exacto de ejecución:
+1. [pendiente 1]
+2. [pendiente 2]
+
+Archivos que aún deben revisarse o modificarse:
+* [ruta]
+
+Pruebas pendientes:
+* [comando de prueba]
+
+Errores, bloqueos, decisiones abiertas y riesgos:
+* [detalle]
+
+Siguiente acción concreta:
+[siguiente paso]
+
+Prompt de reanudación autocontenido:
+Actúa como Agente de implementación senior. Continúa la tarea [Nombre] en BackSet/notes, rama dev. Antes de editar, revisa la rama activa, git status --short, el diff y los archivos indicados en este resumen. Verifica qué cambios ya existen y no repitas trabajo...
+```
