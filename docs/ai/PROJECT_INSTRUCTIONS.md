@@ -6,6 +6,9 @@
 * **Rama Base**: `dev`
 * **Entorno**: Desarrollo local / Producción en Railway
 * **Rol del Agente**: Asistente de codificación AI (Antigravity), actuando como Agente de Implementación Senior en pareja con el usuario.
+* **Seguridad en Producción**: 
+    * En producción, siempre asegure que `CORS_ALLOWED_ORIGINS` en el backend coincida con la URL de producción del frontend.
+    * En producción, asegure que Scalar (`/docs`) y los endpoints de OpenAPI JSON (`/v3/api-docs`) estén deshabilitados (ejecutar con `SPRING_PROFILES_ACTIVE=prod`).
 
 ---
 
@@ -20,10 +23,11 @@ Para cualquier implementación técnica o consulta, se debe priorizar la informa
 
 ## 3. Reglas de Aislamiento y Restricciones `[verificado en documentación]`
 * **Aislamiento**: No interactuar ni modificar archivos fuera del alcance definido por la tarea del usuario.
-* **Seguridad**: Está estrictamente prohibido versionar claves secretas, contraseñas o tokens reales. Usa siempre variables de entorno y documenta en `.env.example`.
+* **Seguridad**: Está estrictamente prohibido versionar claves secretas, contraseñas o tokens reales. Usa siempre variables de entorno y documenta en plantillas por módulo (`backend/.env.example`, `frontend/.env.example`).
 * **Código Funcional**: No modificar ni refactorizar código funcional existente a menos que sea explícitamente solicitado para corregir un bug o implementar una característica.
 * **Migraciones**: Las migraciones de base de datos creadas históricamente por Flyway en `db/migration/` son inmutables. Nunca edites un archivo de migración ya aplicado.
 * **Dependencias**: No agregues nuevas dependencias de terceros sin evaluar primero si la funcionalidad se puede lograr con las librerías ya instaladas.
+* **Perfiles Backend**: El backend se controla con `SPRING_PROFILES_ACTIVE`; `dev` es el valor local por defecto y `prod` es obligatorio en Railway. Swagger UI y `/v3/api-docs` solo deben estar disponibles en `dev`.
 
 ---
 

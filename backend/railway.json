@@ -9,6 +9,6 @@
     "restartPolicyType": "ON_FAILURE",
     "healthcheckPath": "/actuator/health",
     "healthcheckTimeout": 10,
-    "startCommand": "java -jar -Dspring.profiles.active=prod app.jar"
+    "startCommand": "java -jar app.jar"
   }
 }

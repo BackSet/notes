@@ -4,7 +4,8 @@ Este mapa detalla la organización de los módulos del sistema, separando lo que
 
 ## 1. Estructura de Directorios Técnicos `[verificado en Git]`
 * **Backend (`backend/src/main/java/com/notes/backend/`)**:
-  * Contiene únicamente el punto de entrada principal [BackendApplication.java](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/backend/src/main/java/com/notes/backend/BackendApplication.java).
+  * Contiene el punto de entrada principal [BackendApplication.java](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/backend/src/main/java/com/notes/backend/BackendApplication.java).
+  * Contiene configuración de seguridad en `config/SecurityConfig.java` para permitir `/actuator/health`, Swagger UI y OpenAPI, manteniendo autenticado el resto.
 * **Frontend (`frontend/src/`)**:
   * Contiene los archivos base creados por el scaffold de Vite: [main.tsx](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/frontend/src/main.tsx), [App.tsx](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/frontend/src/App.tsx), y los componentes atómicos en `src/components/ui/`.
 
@@ -43,6 +44,9 @@ Este mapa detalla la organización de los módulos del sistema, separando lo que
   * `/actuator/health` - Comprobación de estado del servicio.
   * `/actuator/info` - Información del servicio.
   * `/actuator/prometheus` - Métricas de rendimiento.
+* **Documentación y OpenAPI (solo en perfil `dev`)**:
+  * `/docs` - Interfaz visual de documentación Scalar.
+  * `/v3/api-docs` - Especificación OpenAPI en formato JSON.
 
 ---
 

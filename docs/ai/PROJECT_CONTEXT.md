@@ -24,7 +24,6 @@
 │   ├── Caddyfile                # Servidor web en producción
 │   └── railway.json             # Configuración de Railway
 ├── docker-compose.yml           # Base de datos PostgreSQL para desarrollo local
-├── .env.example                 # Variables de entorno de la raíz
 └── README.md                    # Instrucciones iniciales de ejecución
 ```
 
@@ -37,7 +36,8 @@
   * Spring Data JPA `[verificado en documentación]`
   * Flyway Migration `[verificado en documentación]`
   * Spring Boot Actuator `[verificado en documentación]`
-  * Springdoc OpenAPI (v2.6.0) `[verificado en documentación]`
+  * Springdoc OpenAPI (v2.6.0, API únicamente, sin Swagger UI) `[verificado en documentación]`
+  * Scalar API Reference (v0.6.47, en `/docs` para desarrollo) `[verificado en documentación]`
   * H2 Database (ámbito de test) `[verificado en documentación]`
 * **Frontend**:
   * React 19.2.7 `[verificado en documentación]`
@@ -89,13 +89,15 @@
 * **Local**: Docker Compose levanta base de datos PostgreSQL en el puerto 5432 `[verificado en documentación]`.
 * **CI/CD**: GitHub Actions ejecuta pruebas del backend (Java 26, Maven) y frontend (Node 20, npm run build) en cada push o PR a `main` o `master` `[verificado en documentación]`.
 * **Producción**: Configurado para desplegarse en Railway `[verificado en documentación]`.
-  * El backend corre en un contenedor Docker con perfil `prod`.
+  * El backend corre en un contenedor Docker y selecciona entorno mediante `SPRING_PROFILES_ACTIVE`.
+  * El perfil local por defecto es `dev`; el perfil de Railway debe ser `prod`.
+  * Springdoc OpenAPI y Swagger UI están habilitados solo en `dev` y deshabilitados en `prod`.
   * El frontend se compila y se sirve usando Caddy para optimizar el rendimiento de la SPA.
 
 ## 9. Comandos Confirmados
 ### Backend `[verificado en documentación]`
 * Ejecutar pruebas: `mvn clean test` (ejecutado desde el directorio `backend/`).
-* Ejecutar en desarrollo: `mvn spring-boot:run` (ejecutado desde el directorio `backend/`).
+* Ejecutar en desarrollo: `mvn spring-boot:run` (ejecutado desde el directorio `backend/`; Spring importa `backend/.env` de forma opcional mediante `spring.config.import`; perfil por defecto `dev`).
 
 ### Frontend `[verificado en documentación]`
 * Instalar dependencias: `npm install`
@@ -113,6 +115,7 @@
 ## 11. Reglas Críticas `[verificado en documentación]`
 * Nunca versionar credenciales o secretos en texto plano.
 * No utilizar `ddl-auto=update` en entornos productivos.
+* No exponer Swagger UI ni `/v3/api-docs` en el perfil `prod`.
 * No utilizar `axios` en el frontend; el cliente HTTP oficial es `openapi-fetch`.
 * Evitar el uso de colores hex literales en componentes; usar las variables CSS mapeadas en Tailwind.
 

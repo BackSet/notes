@@ -27,5 +27,5 @@ USER spring:spring
 
 EXPOSE 8080
 
-# Run the application with production profile
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "app.jar"]
+# Run the application. Production sets SPRING_PROFILES_ACTIVE=prod in the environment.
+ENTRYPOINT ["java", "-jar", "app.jar"]
