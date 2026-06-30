@@ -33,6 +33,7 @@
   * Spring Boot 4.1.0 `[verificado en documentación]`
   * Maven 3.9.16 `[verificado en documentación]`
   * Spring Security `[verificado en documentación]`
+  * Spring Security OAuth2 Resource Server (validación de JWT, Nimbus JOSE) `[verificado en documentación]`
   * Spring Data JPA `[verificado en documentación]`
   * Flyway Migration `[verificado en documentación]`
   * Spring Boot Actuator `[verificado en documentación]`
@@ -75,14 +76,33 @@
 
 ## 6. Seguridad y Permisos
 * Configuración de Spring Security activa `[verificado en documentación]`.
-* Generación de contraseña aleatoria por defecto en consola durante inicio de pruebas si no se configura la seguridad `[verificado en documentación]`.
-* Autenticación basada en JWT `[inferido]`.
-* Rutas protegidas y roles de usuario `[pendiente de confirmar]`.
+* Modelo de seguridad persistente (RBAC) `[verificado en Git]`: `User`, `Role`, `Permission`, `RefreshToken` con tablas puente `user_roles` y `role_permissions`.
+* En cada arranque se siembra de forma idempotente el rol `ADMIN` y los permisos base (`USER_READ`, `USER_CREATE`, `USER_UPDATE`, `USER_DISABLE`, `ROLE_READ`, `PERMISSION_READ`), asignándolos todos a `ADMIN` `[verificado en Git]`.
+* Administrador inicial opcional controlado por variables de entorno `INITIAL_ADMIN_ENABLED`, `INITIAL_ADMIN_UPDATE_EXISTING`, `INITIAL_ADMIN_EMAIL`, `INITIAL_ADMIN_USERNAME`, `INITIAL_ADMIN_PASSWORD` `[verificado en Git]`. Si está deshabilitado no se crea ni actualiza; si existe, solo se actualiza cuando `INITIAL_ADMIN_UPDATE_EXISTING=true`.
+* Contraseñas almacenadas con `PasswordEncoder` (BCrypt); nunca en texto plano ni en logs `[verificado en Git]`.
+* Autenticación stateless implementada `[verificado en Git]`:
+  * Endpoints `/api/auth/register|login|refresh|logout|logout-all|me`. `register`, `login` y `refresh` son públicos; el resto requiere Bearer access token.
+  * Access token JWT firmado con HMAC-SHA256, corto (default 15 min). Claims: `sub` (id de usuario), `username`, `email`, `roles`, `permissions`, `iat`, `exp`.
+  * Refresh token opaco de alta entropía, persistido solo como hash SHA-256 (default 7 días). Logout revoca uno; logout-all revoca todos. Un refresh token revocado o expirado no emite nuevos access tokens.
+  * Login acepta email o username; los errores de login son genéricos (no revelan si la cuenta existe). El registro público crea usuarios `enabled` sin rol ADMIN.
+  * El backend actúa como OAuth2 Resource Server; los claims `roles`/`permissions` se mapean a authorities (`ROLE_*` y permisos).
+* Variables JWT: `JWT_SECRET` (≥256 bits), `JWT_EXPIRATION_MS` (access, corto), `JWT_REFRESH_EXPIRATION_MS` (refresh, largo) `[verificado en Git]`.
+* Autorización por permisos explícitos implementada `[verificado en Git]`:
+  * Method security activada (`@EnableMethodSecurity`); los endpoints `/api/admin/**` exigen un permiso concreto con `@PreAuthorize("hasAuthority('...')")`, evaluado desde los claims del access token.
+  * Endpoints admin mínimos: consulta/gestión de usuarios (`USER_READ`, `USER_UPDATE`, `USER_DISABLE`) y consulta de roles (`ROLE_READ`) y permisos (`PERMISSION_READ`).
+  * Sin token → 401; autenticado sin el permiso → 403.
+  * Protección del último administrador: no se puede deshabilitar (ni vía `PATCH enabled=false`) al único admin habilitado (409).
+* CORS configurado en el backend a partir de `app.cors.allowed-origins` (`CORS_ALLOWED_ORIGINS`); permite el origen del frontend para `Authorization` y `Content-Type` `[verificado en Git]`.
+* Frontend de autenticación implementado `[verificado en Git]`:
+  * Login, registro público, panel de usuario y vista `/admin/users`; sesión en Zustand y tokens en `localStorage`.
+  * Cliente `openapi-fetch` con refresh automático ante 401 (una vez) y limpieza de sesión si falla.
+  * Guards de ruta por autenticación y por permiso; los controles admin se ocultan sin permisos. La autorización real permanece en el backend.
+* Autorización en endpoints de negocio (notas) `[pendiente de confirmar]` (iteración posterior).
 
 ## 7. Base de Datos y Migraciones
 * PostgreSQL 16 para desarrollo y producción `[verificado en documentación]`.
 * Flyway configurado para migraciones automatizadas en el backend `[verificado en documentación]`.
-* Las migraciones de base de datos se almacenan en `backend/src/main/resources/db/migration/` `[inferido]`.
+* Las migraciones de base de datos se almacenan en `backend/src/main/resources/db/migration/` `[verificado en Git]`. La primera migración es `V1__create_security_schema.sql` (tablas y constraints del modelo de seguridad). El sembrado de datos (rol, permisos, admin) se realiza en el bootstrap de la aplicación, no en SQL, para mantener consistencia con el entorno de test (H2, Flyway deshabilitado).
 * H2 Database en memoria se utiliza para el entorno de pruebas unitarias/integración para evitar depender de una base de datos PostgreSQL real `[verificado en documentación]`.
 
 ## 8. Infraestructura y CI/CD
@@ -120,5 +140,6 @@
 * Evitar el uso de colores hex literales en componentes; usar las variables CSS mapeadas en Tailwind.
 
 ## 12. Pendientes de Confirmar
-* Flujo de autenticación e inicio de sesión en el frontend `[pendiente de confirmar]`.
-* Modelo de datos inicial y estructura de tablas específicas de notas `[pendiente de confirmar]`.
+* Autorización por permisos en endpoints de negocio y, eventualmente, rol no-administrador para usuarios públicos `[pendiente de confirmar]`.
+* Módulo de notas completo (modelo, endpoints y UI) `[pendiente de confirmar]`.
+* Generación del cliente tipado del frontend con `openapi-typescript` (hoy `paths`/`types` se mantienen a mano) `[pendiente de confirmar]`.

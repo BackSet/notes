@@ -7,6 +7,9 @@ Este documento define los términos canónicos del dominio, convenciones de nome
 | Término (Inglés) | Término (Español) | Descripción | Variantes Prohibidas |
 | :--- | :--- | :--- | :--- |
 | `User` | Usuario | Cuenta de usuario registrada en la aplicación. | `Account`, `Member` |
+| `Role` | Rol | Conjunto nombrado de permisos asignable a usuarios (ej: `ADMIN`). | `Group`, `Profile` |
+| `Permission` | Permiso | Autorización explícita y atómica (ej: `USER_READ`). | `Grant`, `Privilege`, `Authority` |
+| `RefreshToken` | Token de refresco | Token persistido (solo su hash) para renovar la sesión. | `SessionToken` |
 | `Note` | Nota | Elemento principal de información creado por un usuario. | `Memo`, `Post`, `Record` |
 | `Category` | Categoría | Agrupación o etiqueta para organizar las notas. | `Tag`, `Label`, `Folder` |
 
@@ -38,9 +41,12 @@ Este documento define los términos canónicos del dominio, convenciones de nome
 
 ---
 
-## 3. Permisos y Enums Canónicos `[pendiente de confirmar]`
-* Roles de usuario sugeridos: `ROLE_USER`, `ROLE_ADMIN` `[pendiente de confirmar]`.
+## 3. Permisos y Enums Canónicos
+* **Roles** `[verificado en Git]`: el nombre canónico se almacena sin prefijo `ROLE_` (ej: `ADMIN`, constante `RoleName.ADMIN`). El único rol existente es `ADMIN`; el rol para usuarios registrados públicamente se definirá en una iteración posterior y nunca será `ADMIN`.
+* **Permisos** `[verificado en Git]`: nombres en `UPPER_SNAKE_CASE` con formato `RECURSO_ACCION`, catalogados en el enum `BasePermission`. Base actual: `USER_READ`, `USER_CREATE`, `USER_UPDATE`, `USER_DISABLE`, `ROLE_READ`, `PERMISSION_READ`. Todos se asignan al rol `ADMIN`.
 * Enums de estado de la nota (ej: activa, archivada, papelera) `[pendiente de confirmar]`.
+* **Claims del access token JWT** `[verificado en Git]`: `sub` (id de usuario), `username`, `email`, `roles`, `permissions`, `iat`, `exp`. El refresh token es opaco (no es un JWT) y se almacena solo como hash.
+* **Claves de sesión en el frontend** `[verificado en Git]`: `auth_token` (access token) y `auth_refresh_token` (refresh token) en `localStorage`. Constantes de permiso en `lib/auth/permissions.ts` (objeto `Permission`).
 
 ---
 
