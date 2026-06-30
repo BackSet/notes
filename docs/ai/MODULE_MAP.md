@@ -23,6 +23,8 @@ Este mapa detalla la organización de los módulos del sistema, separando lo que
   * `components/admin/UsersTable.tsx`: tabla pura con controles habilitar/deshabilitar.
   * `pages/`: `LoginPage`, `RegisterPage`, `DashboardPage`, `AdminUsersPage`.
   * `components/ui/`: componentes atómicos base.
+  * `components/ui/` ampliado: componentes atomicos (`Button`, `Input`, `Label`, `Textarea`), superficies (`SurfaceCard`), feedback (`LoadingState`, `EmptyState`, `ErrorState`, `Skeleton`), estructura (`PageHeader`), confirmacion (`ConfirmDialog`) y notificaciones (`Toaster`).
+  * `index.css` + `tailwind.config.js`: tokens semanticos de tema, dark mode con `.dark`, sombras, radio, motion y utilidades reutilizables de superficie/foco/alerta.
 
 ---
 
@@ -116,3 +118,4 @@ Este mapa detalla la organización de los módulos del sistema, separando lo que
 ## 7. Zonas de Búsqueda y Pruebas
 * **Backend Tests**: Ubicados en `backend/src/test/java/com/notes/backend/` `[verificado en Git]`. Contiene [BackendApplicationTests.java](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/backend/src/test/java/com/notes/backend/BackendApplicationTests.java) (carga de contexto), el paquete `bootstrap/` con las pruebas del modelo de seguridad (`InitialAdminServiceTest` con Mockito, `RbacSeedingIntegrationTest`, `InitialAdminEnabledIntegrationTest`) el paquete `auth/` con las pruebas de autenticación (`AuthFlowIntegrationTest`, `AdminLoginIntegrationTest`) y el paquete `admin/` con `AdminAuthorizationIntegrationTest` (acceso permitido/denegado por permisos, 401 sin token, 403 sin permiso y protección del último admin). Las pruebas de auth construyen `MockMvc` manualmente con el `FilterChainProxy` real (en Spring Boot 4 no está disponible `@AutoConfigureMockMvc` en el classpath de test).
 * **Frontend Tests** (Vitest + Testing Library) `[verificado en Git]`: `components/ui/__tests__/Button.test.tsx` (render base), `lib/auth/__tests__/permissions.test.ts` (`userHasPermission`), `lib/auth/__tests__/session.test.ts` (almacenamiento de tokens y pub/sub) y `components/admin/__tests__/UsersTable.test.tsx` (filas, estado vacío y ocultado de controles sin permisos).
+* **Frontend UI Tests** `[verificado en Git]`: `components/ui/__tests__/FeedbackStates.test.tsx` cubre `Skeleton`, `LoadingState`, `ErrorState`, `PageHeader` y `ConfirmDialog`; `UsersTable.test.tsx` cubre tambien el contenedor responsive con `overflow-x-auto`.

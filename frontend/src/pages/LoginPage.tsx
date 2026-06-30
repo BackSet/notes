@@ -53,7 +53,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="mx-auto max-w-sm">
+    <div className="mx-auto w-full max-w-md">
       <SurfaceCard>
         <CardHeader>
           <CardTitle>Iniciar sesión</CardTitle>
@@ -101,7 +101,7 @@ export function LoginPage() {
           </form>
           <p className="mt-4 text-center text-sm text-muted-foreground">
             ¿No tienes cuenta?{" "}
-            <Link to="/register" className="text-primary hover:underline">
+            <Link to="/register" className="focus-ring rounded-sm text-primary hover:underline">
               Regístrate
             </Link>
           </p>

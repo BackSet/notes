@@ -57,7 +57,7 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="mx-auto max-w-sm">
+    <div className="mx-auto w-full max-w-md">
       <SurfaceCard>
         <CardHeader>
           <CardTitle>Crear cuenta</CardTitle>
@@ -120,7 +120,7 @@ export function RegisterPage() {
           </form>
           <p className="mt-4 text-center text-sm text-muted-foreground">
             ¿Ya tienes cuenta?{" "}
-            <Link to="/login" className="text-primary hover:underline">
+            <Link to="/login" className="focus-ring rounded-sm text-primary hover:underline">
               Inicia sesión
             </Link>
           </p>

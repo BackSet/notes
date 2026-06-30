@@ -28,7 +28,7 @@ El proyecto consta de tres servicios principales en Railway:
    - **Service Name**: Cambia el nombre a `backend`.
    - **Root Directory**: Configúralo como `backend`.
 4. Ve a la pestaña **Variables** y agrega las siguientes variables de entorno:
-   - `SPRING_PROFILES_ACTIVE=prod` (obligatorio para cargar configuración de producción y deshabilitar Swagger/OpenAPI)
+   - `SPRING_PROFILES_ACTIVE=prod` (obligatorio para cargar configuracion de produccion y deshabilitar Scalar/OpenAPI)
    - `SPRING_DATASOURCE_URL=jdbc:postgresql://${{Postgres.DATABASE_URL}}` (Railway resolverá esto automáticamente usando la base de datos vinculada)
    - `SPRING_DATASOURCE_USERNAME=${{Postgres.PGUSER}}`
    - `SPRING_DATASOURCE_PASSWORD=${{Postgres.PGPASSWORD}}`
@@ -60,6 +60,6 @@ El proyecto consta de tres servicios principales en Railway:
 ## Verificación del Despliegue
 - Accede al dominio público del frontend en tu navegador.
 - Verifica que las llamadas a la API (ej: `/actuator/health` o endpoints de negocio) funcionen correctamente a través de la pestaña Red de las herramientas de desarrollo del navegador.
-- Verifica que `/docs` (Scalar), `/swagger-ui/index.html` y `/v3/api-docs` no entreguen contenido público en el dominio del backend (deben responder con error 404 o similar).
+- Verifica que `/docs` (Scalar) y la documentacion OpenAPI no entreguen contenido publico en el dominio del backend (deben responder con error 404 o similar).
 - Verifica que `/actuator/health` responda sin exponer detalles sensibles.
 - Comprueba que las rutas de la SPA funcionen al recargar la página (gracias a la regla de fallback en `Caddyfile`).

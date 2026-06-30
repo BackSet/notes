@@ -22,6 +22,8 @@ Este documento detalla las variables de entorno requeridas para el correcto func
 
 ---
 
+> Nota: el backend tambien soporta `JWT_REFRESH_EXPIRATION_MS` para configurar la duracion del refresh token opaco. Valor recomendado inicial: `604800000` (7 dias).
+
 ## 2. Servicio Frontend (`frontend`)
 
 > [!IMPORTANT]

@@ -8,7 +8,7 @@
 * **Rol del Agente**: Asistente de codificación AI (Antigravity), actuando como Agente de Implementación Senior en pareja con el usuario.
 * **Seguridad en Producción**: 
     * En producción, siempre asegure que `CORS_ALLOWED_ORIGINS` en el backend coincida con la URL de producción del frontend.
-    * En producción, asegure que Scalar (`/docs`) y los endpoints de OpenAPI JSON (`/v3/api-docs`) estén deshabilitados (ejecutar con `SPRING_PROFILES_ACTIVE=prod`).
+    * En produccion, asegure que Scalar (`/docs`) y la documentacion OpenAPI esten deshabilitados (ejecutar con `SPRING_PROFILES_ACTIVE=prod`).
 
 ---
 
@@ -17,7 +17,7 @@ Para cualquier implementación técnica o consulta, se debe priorizar la informa
 1. Código fuente real del repositorio en la rama `dev`.
 2. Archivos de configuración y manifiestos de dependencias ([backend/pom.xml](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/backend/pom.xml), [frontend/package.json](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/frontend/package.json)).
 3. Guías de despliegue y variables de entorno ([docs/despliegue/RAILWAY_PRODUCCION_GUIA.md](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/docs/despliegue/RAILWAY_PRODUCCION_GUIA.md), [docs/despliegue/VARIABLES_ENTORNO.md](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/docs/despliegue/VARIABLES_ENTORNO.md)).
-4. Archivos de contexto de la carpeta `docs/ai/`.
+4. Archivos de contexto de la carpeta `docs/ai/`, incluyendo `PROJECT_INITIALIZATION_BLUEPRINT.md` cuando la tarea trate de inicializar o replicar la plantilla full-stack.
 
 ---
 
@@ -27,14 +27,14 @@ Para cualquier implementación técnica o consulta, se debe priorizar la informa
 * **Código Funcional**: No modificar ni refactorizar código funcional existente a menos que sea explícitamente solicitado para corregir un bug o implementar una característica.
 * **Migraciones**: Las migraciones de base de datos creadas históricamente por Flyway en `db/migration/` son inmutables. Nunca edites un archivo de migración ya aplicado.
 * **Dependencias**: No agregues nuevas dependencias de terceros sin evaluar primero si la funcionalidad se puede lograr con las librerías ya instaladas.
-* **Perfiles Backend**: El backend se controla con `SPRING_PROFILES_ACTIVE`; `dev` es el valor local por defecto y `prod` es obligatorio en Railway. Swagger UI y `/v3/api-docs` solo deben estar disponibles en `dev`.
+* **Perfiles Backend**: El backend se controla con `SPRING_PROFILES_ACTIVE`; `dev` es el valor local por defecto y `prod` es obligatorio en Railway. Scalar y la documentacion OpenAPI solo deben estar disponibles en `dev`.
 
 ---
 
 ## 4. Obligación de Mantenimiento de Contexto
 Después de cada ciclo de implementación o cambio en el repositorio, el Agente tiene la **obligación estricta** de:
 1. Revisar si el cambio afecta la arquitectura, el mapa de módulos, las convenciones de nombres o las instrucciones del proyecto.
-2. Actualizar los correspondientes archivos de contexto en `docs/ai/` (`PROJECT_CONTEXT.md`, `MODULE_MAP.md`, `NAMING.md`, `PROJECT_INSTRUCTIONS.md`).
+2. Actualizar los correspondientes archivos de contexto en `docs/ai/` (`PROJECT_CONTEXT.md`, `MODULE_MAP.md`, `NAMING.md`, `PROJECT_INSTRUCTIONS.md` y `PROJECT_INITIALIZATION_BLUEPRINT.md` cuando cambie el baseline reutilizable).
 3. Asegurar que no quede documentación desactualizada.
 
 ---

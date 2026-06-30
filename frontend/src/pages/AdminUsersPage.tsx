@@ -7,8 +7,10 @@ import {
   CardDescription,
   CardContent,
 } from "../components/ui/SurfaceCard"
+import { PageHeader } from "../components/ui/PageHeader"
 import { LoadingState } from "../components/ui/LoadingState"
-import { EmptyState } from "../components/ui/EmptyState"
+import { ErrorState } from "../components/ui/ErrorState"
+import { ConfirmDialog } from "../components/ui/ConfirmDialog"
 import { UsersTable } from "../components/admin/UsersTable"
 import { RequirePermission } from "../components/auth/RequirePermission"
 import { client } from "../lib/api/client"
@@ -35,6 +37,7 @@ function AdminUsersContent() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [busyUserId, setBusyUserId] = useState<number | null>(null)
+  const [pendingToggleUser, setPendingToggleUser] = useState<UserSummaryResponse | null>(null)
 
   const loadUsers = useCallback(async () => {
     setLoading(true)
@@ -53,7 +56,16 @@ function AdminUsersContent() {
     void loadUsers()
   }, [loadUsers])
 
-  const handleToggleEnabled = useCallback(async (user: UserSummaryResponse) => {
+  const handleToggleEnabled = useCallback((user: UserSummaryResponse) => {
+    setPendingToggleUser(user)
+  }, [])
+
+  const confirmToggleEnabled = useCallback(async () => {
+    if (!pendingToggleUser) {
+      return
+    }
+
+    const user = pendingToggleUser
     setBusyUserId(user.id)
 
     let updated: UserSummaryResponse | undefined
@@ -80,35 +92,58 @@ function AdminUsersContent() {
       toast.success(next.enabled ? "Usuario habilitado" : "Usuario deshabilitado")
     }
     setBusyUserId(null)
-  }, [])
+    setPendingToggleUser(null)
+  }, [pendingToggleUser])
 
   if (loading) {
-    return <LoadingState message="Cargando usuarios..." />
+    return <LoadingState variant="table" message="Cargando usuarios..." />
   }
   if (error) {
     return (
-      <EmptyState
-        title="Error"
+      <ErrorState
+        title="No se pudieron cargar los usuarios"
         description={error}
+        actionLabel="Reintentar"
+        onAction={() => void loadUsers()}
       />
     )
   }
 
   return (
-    <SurfaceCard>
-      <CardHeader>
-        <CardTitle>Usuarios</CardTitle>
-        <CardDescription>Gestiona las cuentas registradas.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <UsersTable
-          users={users}
-          canManage={canManage}
-          busyUserId={busyUserId}
-          onToggleEnabled={handleToggleEnabled}
-        />
-      </CardContent>
-    </SurfaceCard>
+    <div className="space-y-6">
+      <PageHeader
+        title="Usuarios"
+        description="Gestiona las cuentas registradas y su estado de acceso."
+      />
+      <SurfaceCard>
+        <CardHeader>
+          <CardTitle>Listado de usuarios</CardTitle>
+          <CardDescription>Los cambios de estado se aplican inmediatamente.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <UsersTable
+            users={users}
+            canManage={canManage}
+            busyUserId={busyUserId}
+            onToggleEnabled={handleToggleEnabled}
+          />
+        </CardContent>
+      </SurfaceCard>
+      <ConfirmDialog
+        open={pendingToggleUser !== null}
+        title={pendingToggleUser?.enabled ? "Deshabilitar usuario" : "Habilitar usuario"}
+        description={
+          pendingToggleUser
+            ? `Vas a ${pendingToggleUser.enabled ? "deshabilitar" : "habilitar"} a ${pendingToggleUser.username}.`
+            : ""
+        }
+        confirmLabel={pendingToggleUser?.enabled ? "Deshabilitar" : "Habilitar"}
+        destructive={pendingToggleUser?.enabled}
+        busy={busyUserId !== null}
+        onCancel={() => setPendingToggleUser(null)}
+        onConfirm={() => void confirmToggleEnabled()}
+      />
+    </div>
   )
 }
 

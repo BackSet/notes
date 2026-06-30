@@ -16,6 +16,10 @@ This project is a fullstack notes application built with:
 └── README.md           # This file
 ```
 
+## Reusable Initialization Blueprint
+
+This repository also documents a reusable full-stack baseline for future projects in `docs/ai/PROJECT_INITIALIZATION_BLUEPRINT.md`. Use it when starting a new project from the `notes` architecture: monorepo, Spring Boot backend, React/Vite frontend, auth/RBAC/admin baseline, per-service variables, Docker/Railway deployment, and UI foundations.
+
 ## Getting Started
 
 ### Prerequisites
@@ -61,8 +65,7 @@ El backend usa `SPRING_PROFILES_ACTIVE` para seleccionar entorno. Si no defines 
 
 En `dev`, la documentación de API está habilitada:
 ```text
-http://localhost:8080/swagger-ui/index.html
-http://localhost:8080/v3/api-docs
+http://localhost:8080/docs
 ```
 
 Para forzar desarrollo en PowerShell:
@@ -79,7 +82,7 @@ cd backend
 mvn spring-boot:run
 ```
 
-En `prod`, `/swagger-ui/index.html` y `/v3/api-docs` no deben devolver contenido público; una respuesta 401 o 404 es esperada. `/actuator/health` sigue disponible sin detalles sensibles.
+En `prod`, Scalar (`/docs`) y la documentacion OpenAPI no deben entregar contenido publico. `/actuator/health` sigue disponible sin detalles sensibles.
 
 ### 3. Frontend Setup
 1. Copy the environment template:

@@ -37,7 +37,7 @@
   * Spring Data JPA `[verificado en documentación]`
   * Flyway Migration `[verificado en documentación]`
   * Spring Boot Actuator `[verificado en documentación]`
-  * Springdoc OpenAPI (v2.6.0, API únicamente, sin Swagger UI) `[verificado en documentación]`
+  * Springdoc OpenAPI (v2.6.0, API JSON usada por Scalar en desarrollo) `[verificado en documentacion]`
   * Scalar API Reference (v0.6.47, en `/docs` para desarrollo) `[verificado en documentación]`
   * H2 Database (ámbito de test) `[verificado en documentación]`
 * **Frontend**:
@@ -68,6 +68,7 @@
   * `Routes`: Enrutamiento de páginas estructurado.
   * `Store`: Estado global administrado por Zustand.
   * `API`: Cliente centralizado en `src/lib/api/client.ts` consumiendo endpoints a través de `openapi-fetch`.
+  * `Theme`: Tokens CSS semanticos mapeados en Tailwind, con soporte `.dark`, estados visuales reutilizables, skeletons y utilidades de foco/motion.
 
 ## 5. Contratos y Convenciones `[inferido]`
 * Nombres de variables y funciones en inglés.
@@ -111,7 +112,7 @@
 * **Producción**: Configurado para desplegarse en Railway `[verificado en documentación]`.
   * El backend corre en un contenedor Docker y selecciona entorno mediante `SPRING_PROFILES_ACTIVE`.
   * El perfil local por defecto es `dev`; el perfil de Railway debe ser `prod`.
-  * Springdoc OpenAPI y Swagger UI están habilitados solo en `dev` y deshabilitados en `prod`.
+  * Scalar y la documentacion OpenAPI estan habilitados solo en `dev` y deshabilitados en `prod`.
   * El frontend se compila y se sirve usando Caddy para optimizar el rendimiento de la SPA.
 
 ## 9. Comandos Confirmados
@@ -131,12 +132,14 @@
 * [backend/pom.xml](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/backend/pom.xml)
 * [frontend/package.json](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/frontend/package.json)
 * [docs/despliegue/RAILWAY_PRODUCCION_GUIA.md](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/docs/despliegue/RAILWAY_PRODUCCION_GUIA.md)
+* [docs/ai/PROJECT_INITIALIZATION_BLUEPRINT.md](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/docs/ai/PROJECT_INITIALIZATION_BLUEPRINT.md)
 
 ## 11. Reglas Críticas `[verificado en documentación]`
 * Nunca versionar credenciales o secretos en texto plano.
 * No utilizar `ddl-auto=update` en entornos productivos.
-* No exponer Swagger UI ni `/v3/api-docs` en el perfil `prod`.
+* No exponer Scalar ni documentacion OpenAPI en el perfil `prod`.
 * No utilizar `axios` en el frontend; el cliente HTTP oficial es `openapi-fetch`.
+* La UI base debe usar los componentes reutilizables de `frontend/src/components/ui/` para superficies, skeletons, estados de loading/error/vacio, encabezados de pagina, confirmaciones y toasts.
 * Evitar el uso de colores hex literales en componentes; usar las variables CSS mapeadas en Tailwind.
 
 ## 12. Pendientes de Confirmar

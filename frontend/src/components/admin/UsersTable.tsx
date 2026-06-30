@@ -22,10 +22,11 @@ export function UsersTable({ users, canManage, busyUserId, onToggleEnabled }: Us
   }
 
   return (
-    <table className="w-full border-collapse text-sm">
+    <div className="w-full overflow-x-auto rounded-md border">
+    <table className="w-full min-w-[720px] border-collapse text-sm">
       <caption className="sr-only">Listado de usuarios</caption>
       <thead>
-        <tr className="border-b text-left text-muted-foreground">
+        <tr className="border-b bg-muted/40 text-left text-muted-foreground">
           <th scope="col" className="px-3 py-2 font-medium">Usuario</th>
           <th scope="col" className="px-3 py-2 font-medium">Email</th>
           <th scope="col" className="px-3 py-2 font-medium">Roles</th>
@@ -72,5 +73,6 @@ export function UsersTable({ users, canManage, busyUserId, onToggleEnabled }: Us
         ))}
       </tbody>
     </table>
+    </div>
   )
 }

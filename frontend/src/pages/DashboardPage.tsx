@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router"
+import { PageHeader } from "../components/ui/PageHeader"
 import {
   SurfaceCard,
   CardHeader,
@@ -16,6 +17,10 @@ function DashboardContent() {
 
   return (
     <div className="space-y-6">
+      <PageHeader
+        title="Panel"
+        description="Resumen de tu cuenta y accesos disponibles."
+      />
       <SurfaceCard>
         <CardHeader>
           <CardTitle>Hola, {user?.username}</CardTitle>
@@ -32,7 +37,7 @@ function DashboardContent() {
           </p>
           {hasPermission(Permission.USER_READ) && (
             <p className="pt-2">
-              <Link to="/admin/users" className="text-primary hover:underline">
+              <Link to="/admin/users" className="focus-ring rounded-sm text-primary hover:underline">
                 Ir a administración de usuarios →
               </Link>
             </p>

@@ -24,11 +24,12 @@ describe("UsersTable", () => {
   })
 
   test("renders a row and a management control when allowed", () => {
-    render(
+    const { container } = render(
       <UsersTable users={users} canManage onToggleEnabled={vi.fn()} busyUserId={null} />
     )
     expect(screen.getByText("admin")).toBeInTheDocument()
     expect(screen.getByRole("button", { name: /Deshabilitar/i })).toBeInTheDocument()
+    expect(container.querySelector(".overflow-x-auto")).toBeInTheDocument()
   })
 
   test("hides management controls when not allowed", () => {
