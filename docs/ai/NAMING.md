@@ -1,55 +1,98 @@
-# Naming Conventions & Glossary
+# Nomenclatura Canonica
 
-Este documento define los términos canónicos del dominio, convenciones de nomenclatura y mapeo técnico para el proyecto `notes`.
+## Proyecto
 
-## 1. Glosario de Términos del Dominio `[inferido]`
+- Proyecto: `notes`.
+- Repo: `BackSet/notes`.
+- Monorepo: `backend/`, `frontend/`, `docs/`.
 
-| Término (Inglés) | Término (Español) | Descripción | Variantes Prohibidas |
-| :--- | :--- | :--- | :--- |
-| `User` | Usuario | Cuenta de usuario registrada en la aplicación. | `Account`, `Member` |
-| `Role` | Rol | Conjunto nombrado de permisos asignable a usuarios (ej: `ADMIN`). | `Group`, `Profile` |
-| `Permission` | Permiso | Autorización explícita y atómica (ej: `USER_READ`). | `Grant`, `Privilege`, `Authority` |
-| `RefreshToken` | Token de refresco | Token persistido (solo su hash) para renovar la sesión. | `SessionToken` |
-| `Note` | Nota | Elemento principal de información creado por un usuario. | `Memo`, `Post`, `Record` |
-| `Category` | Categoría | Agrupación o etiqueta para organizar las notas. | `Tag`, `Label`, `Folder` |
+## Paquetes Backend
 
----
+- Paquete base: `com.notes.backend`.
+- Paquetes por responsabilidad: `auth`, `admin`, `bootstrap`, `config`, `security`, `user`.
+- Clases Java en `PascalCase`.
+- Metodos, campos y variables en `camelCase`.
+- Constantes Java en `UPPER_SNAKE_CASE`.
+- DTOs de entrada terminan en `Request`.
+- DTOs de salida terminan en `Response`.
+- Excepciones terminan en `Exception`.
+- Repositorios Spring Data terminan en `Repository`.
+- Servicios terminan en `Service`.
+- Controladores terminan en `Controller`.
 
-## 2. Reglas de Nomenclatura por Contexto
+## Base de Datos
 
-### A. Interfaz de Usuario (UI) `[inferido]`
-* Componentes de React en **PascalCase** (ej: `NoteCard.tsx`, `Sidebar.tsx`).
-* Clases CSS: Clases utilitarias de Tailwind en minúsculas y separadas por espacios.
-* Archivos de traducción u etiquetas: En español o inglés según lo defina el diseño final `[pendiente de confirmar]`.
+- Tablas en `snake_case` plural cuando representan colecciones.
+- Columnas en `snake_case`.
+- Migraciones Flyway con formato `V<numero>__descripcion.sql`.
+- Migraciones aplicadas no deben editarse; crear una nueva migracion para cambios posteriores.
 
-### B. API y JSON `[inferido]`
-* Endpoints REST en minúsculas y pluralizados, usando `kebab-case` para palabras compuestas (ej: `/api/users`, `/api/notes`, `/api/note-categories`).
-* Atributos de respuesta/solicitud en **camelCase** (ej: `createdAt`, `updatedAt`, `isArchived`).
+Tablas de seguridad actuales:
 
-### C. Backend (Java) `[verificado en documentación]`
-* **Clases**: PascalCase (ej: `BackendApplication`, `NoteController`, `NoteService`).
-* **Interfaces**: PascalCase (ej: `NoteRepository`).
-* **Métodos**: camelCase (ej: `findById()`, `saveNote()`).
-* **Variables**: camelCase (ej: `noteId`, `title`, `content`).
-* **Paquetes**: Minúsculas continuas, siguiendo la jerarquía inversa del dominio (ej: `com.notes.backend.controller`).
+- `users`.
+- `roles`.
+- `permissions`.
+- `user_roles`.
+- `role_permissions`.
+- `refresh_tokens`.
 
-### D. Base de Datos `[inferido]`
-* **Tablas**: snake_case en plural (ej: `notes`, `users`, `categories`).
-* **Columnas**: snake_case en singular (ej: `id`, `title`, `content`, `user_id`, `created_at`).
-* **Claves Primarias**: Siempre `id` `[pendiente de confirmar]`.
-* **Claves Foráneas**: `[nombre_tabla_singular]_id` (ej: `user_id`).
+## API
 
----
+- Prefijo principal: `/api`.
+- Recursos en minusculas y plural cuando aplique.
+- Palabras compuestas en `kebab-case`.
+- Endpoints auth actuales bajo `/api/auth`.
+- Endpoints admin actuales bajo `/api/admin`.
+- Healthcheck bajo `/actuator/health`.
+- Scalar bajo `/docs` solo en `dev`.
+- OpenAPI bajo `/v3/api-docs` solo en `dev`.
 
-## 3. Permisos y Enums Canónicos
-* **Roles** `[verificado en Git]`: el nombre canónico se almacena sin prefijo `ROLE_` (ej: `ADMIN`, constante `RoleName.ADMIN`). El único rol existente es `ADMIN`; el rol para usuarios registrados públicamente se definirá en una iteración posterior y nunca será `ADMIN`.
-* **Permisos** `[verificado en Git]`: nombres en `UPPER_SNAKE_CASE` con formato `RECURSO_ACCION`, catalogados en el enum `BasePermission`. Base actual: `USER_READ`, `USER_CREATE`, `USER_UPDATE`, `USER_DISABLE`, `ROLE_READ`, `PERMISSION_READ`. Todos se asignan al rol `ADMIN`.
-* Enums de estado de la nota (ej: activa, archivada, papelera) `[pendiente de confirmar]`.
-* **Claims del access token JWT** `[verificado en Git]`: `sub` (id de usuario), `username`, `email`, `roles`, `permissions`, `iat`, `exp`. El refresh token es opaco (no es un JWT) y se almacena solo como hash.
-* **Claves de sesión en el frontend** `[verificado en Git]`: `auth_token` (access token) y `auth_refresh_token` (refresh token) en `localStorage`. Constantes de permiso en `lib/auth/permissions.ts` (objeto `Permission`).
+## Roles y Permisos
 
----
+Roles actuales:
 
-## 4. Nombres Históricos Prohibidos `[verificado en documentación]`
-* Evitar el uso de `master` para ramas principales; la rama por defecto ha sido renombrada a `main` `[verificado en Git]`.
-* No utilizar términos como `todo` o `task` para referirse al objeto principal del negocio, el cual se denomina de manera exclusiva como `Note` `[inferido]`.
+- `ADMIN`.
+- `USER`.
+
+Convencion de permisos:
+
+- Formato `scope:action`.
+- Scope en minusculas.
+- Action en minusculas.
+- Ejemplo vigente: permisos administrativos definidos por `BasePermission`.
+
+## JWT y Sesion
+
+- Access token: JWT firmado por backend.
+- Refresh token: opaco, persistido solo como hash.
+- Claims deben mantenerse minimos y no incluir secretos.
+- Storage frontend centralizado mediante helpers de `frontend/src/lib/auth/session.ts`.
+
+## Frontend
+
+- Componentes React en `PascalCase`.
+- Hooks en `useCamelCase`.
+- Utilidades en `camelCase`.
+- Archivos de tests con sufijo `.test.ts` o `.test.tsx`.
+- Componentes UI base en `frontend/src/components/ui/`.
+- Cliente API en `frontend/src/lib/api/`.
+- Estado global en `frontend/src/stores/`.
+
+## Variables
+
+Backend:
+
+- Variables en `UPPER_SNAKE_CASE`.
+- Plantilla versionada: `backend/.env.example`.
+- Archivo real local ignorado: `backend/.env`.
+
+Frontend:
+
+- Variables publicas con prefijo `VITE_`.
+- Plantilla versionada: `frontend/.env.example`.
+- Archivo real local ignorado: `frontend/.env`.
+- Nunca usar `VITE_` para secretos, JWT secrets, passwords o credenciales de base de datos.
+
+## Dominio de Negocio
+
+El dominio funcional de notas aun no esta implementado. No documentar `Note`, categorias, etiquetas ni endpoints de notas como existentes hasta que el codigo los incluya.

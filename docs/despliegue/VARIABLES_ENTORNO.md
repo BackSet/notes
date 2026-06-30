@@ -1,34 +1,43 @@
-# Variables de Entorno - Producción (Railway)
+# Variables de Entorno - Produccion Railway
 
-Este documento detalla las variables de entorno requeridas para el correcto funcionamiento del backend y frontend en el entorno de producción de Railway.
+Este documento lista las variables requeridas para desplegar backend y frontend en Railway.
 
-> [!WARNING]
-> Nunca incluyas valores reales de contraseñas, tokens o secretos en este documento ni en ningún archivo que se suba a Git. Los valores reales deben configurarse directamente en el panel de control de Railway.
+> Nunca incluyas valores reales de contrasenas, tokens o secretos en archivos versionados. Configura los valores reales directamente en Railway.
 
----
+## Servicio Backend
 
-## 1. Servicio Backend (`backend`)
-
-| Variable | Descripción | Valor Recomendado / Ejemplo | Origen en Railway |
+| Variable | Descripcion | Ejemplo / valor esperado | Origen |
 | :--- | :--- | :--- | :--- |
-| `SPRING_PROFILES_ACTIVE` | Activa el perfil de producción en Spring Boot. | `prod` | Manual |
-| `PORT` | Puerto expuesto del contenedor. | `8080` (Railway lo asigna automáticamente) | Automático |
-| `SPRING_DATASOURCE_URL` | URL de conexión JDBC para PostgreSQL. | `jdbc:postgresql://${{Postgres.DATABASE_URL}}` | Vinculación de Servicio |
-| `SPRING_DATASOURCE_USERNAME` | Usuario de la base de datos PostgreSQL. | `${{Postgres.PGUSER}}` | Vinculación de Servicio |
-| `SPRING_DATASOURCE_PASSWORD` | Contraseña de la base de datos PostgreSQL. | `${{Postgres.PGPASSWORD}}` | Vinculación de Servicio |
-| `JWT_SECRET` | Clave secreta para firmar los tokens JWT. | `CHANGE_ME_MUST_BE_AT_LEAST_256_BITS_LONG` | Manual (Generar un secreto fuerte) |
-| `JWT_EXPIRATION_MS` | Tiempo de expiración del token JWT en milisegundos. | `86400000` (24 horas) | Manual |
-| `CORS_ALLOWED_ORIGINS` | Orígenes permitidos para peticiones CORS (URL del frontend). | `https://${{frontend.RAILWAY_PUBLIC_DOMAIN}}` | Vinculación de Servicio / Manual |
+| `SPRING_PROFILES_ACTIVE` | Perfil Spring Boot. | `prod` | Manual |
+| `PORT` | Puerto del contenedor. | `8080` o valor inyectado por Railway | Railway |
+| `SPRING_DATASOURCE_URL` | URL JDBC de PostgreSQL. | `jdbc:postgresql://${{Postgres.DATABASE_URL}}` | PostgreSQL Railway |
+| `SPRING_DATASOURCE_USERNAME` | Usuario PostgreSQL. | `${{Postgres.PGUSER}}` | PostgreSQL Railway |
+| `SPRING_DATASOURCE_PASSWORD` | Password PostgreSQL. | `${{Postgres.PGPASSWORD}}` | PostgreSQL Railway |
+| `JWT_SECRET` | Secreto de firma JWT. | Generar secreto fuerte fuera del repo | Manual |
+| `JWT_EXPIRATION_MS` | Duracion del access token. | `900000` | Manual |
+| `JWT_REFRESH_EXPIRATION_MS` | Duracion del refresh token opaco. | `604800000` | Manual |
+| `CORS_ALLOWED_ORIGINS` | Origen exacto del frontend. | `https://<frontend-domain>` | Manual |
+| `INITIAL_ADMIN_ENABLED` | Crea el admin inicial al arrancar. | `false` por defecto, `true` solo para bootstrap controlado | Manual |
+| `INITIAL_ADMIN_UPDATE_EXISTING` | Actualiza admin existente si coincide. | `false` por defecto | Manual |
+| `INITIAL_ADMIN_EMAIL` | Email del admin inicial. | Valor real solo en Railway | Manual |
+| `INITIAL_ADMIN_USERNAME` | Username del admin inicial. | Valor real solo en Railway | Manual |
+| `INITIAL_ADMIN_PASSWORD` | Password del admin inicial. | Valor real solo en Railway | Manual |
 
----
+Notas:
 
-> Nota: el backend tambien soporta `JWT_REFRESH_EXPIRATION_MS` para configurar la duracion del refresh token opaco. Valor recomendado inicial: `604800000` (7 dias).
+- `SPRING_PROFILES_ACTIVE=prod` es obligatorio para cargar configuracion productiva.
+- En `prod`, Scalar (`/docs`) y OpenAPI (`/v3/api-docs`) estan deshabilitados.
+- `CORS_ALLOWED_ORIGINS` no debe usar comodines en produccion.
+- Desactiva `INITIAL_ADMIN_ENABLED` despues de completar el bootstrap inicial si ya no se necesita.
 
-## 2. Servicio Frontend (`frontend`)
+## Servicio Frontend
 
-> [!IMPORTANT]
-> El frontend es una SPA estática construida en tiempo de compilación. Por lo tanto, la variable `VITE_API_BASE_URL` se inyecta **durante el build** del contenedor Docker y no puede ser cambiada dinámicamente en tiempo de ejecución sin reconstruir el contenedor.
-
-| Variable | Descripción | Valor Recomendado / Ejemplo | Origen en Railway |
+| Variable | Descripcion | Ejemplo / valor esperado | Origen |
 | :--- | :--- | :--- | :--- |
-| `VITE_API_BASE_URL` | URL base pública de la API del backend. | `https://${{backend.RAILWAY_PUBLIC_DOMAIN}}` o dominio directo de producción del backend. | Manual |
+| `VITE_API_BASE_URL` | URL publica del backend. | `https://<backend-domain>` | Manual |
+
+Notas:
+
+- `VITE_API_BASE_URL` se inyecta durante el build de Vite.
+- Si cambia la URL del backend, reconstruye el frontend.
+- No pongas secretos, credenciales JWT ni credenciales de base de datos en variables `VITE_*`.

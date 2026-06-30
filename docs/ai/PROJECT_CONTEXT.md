@@ -1,148 +1,142 @@
-# Project Context: Notes
+# Contexto del Proyecto
 
-## 1. Identificación del Proyecto
-* **Nombre del Proyecto**: notes `[verificado en documentación]`
-* **Repositorio**: `BackSet/notes` `[verificado en Git]`
-* **Rama Base**: `dev` `[verificado en Git]`
-* **Fecha de Auditoría**: 2026-06-29 `[verificado en documentación]`
+## Identidad
 
-## 2. Estructura Principal del Repositorio `[verificado en Git]`
-```
+- Nombre del proyecto: `notes`.
+- Repositorio remoto: `BackSet/notes`.
+- Rama de trabajo revisada: `dev`.
+- Tipo: monorepo full-stack con backend, frontend, documentacion y soporte de despliegue.
+
+## Estado Actual
+
+El proyecto tiene una base tecnica implementada para autenticacion, usuarios, roles, permisos, bootstrap de administrador inicial, refresh tokens, UI base y despliegue separado por servicio. No hay modulo de dominio de notas implementado todavia; cualquier CRUD de notas debe tratarse como pendiente y no como funcionalidad existente.
+
+## Estructura
+
+```text
 /
-├── .github/workflows/build.yml  # Workflow de CI/CD para GitHub Actions
-├── backend/                     # Código del backend (Spring Boot)
-│   ├── src/
-│   │   ├── main/java/com/notes/backend/  # Código fuente Java
-│   │   └── test/java/com/notes/backend/  # Código de pruebas unitarias/integración
-│   ├── pom.xml                  # Manifiesto Maven
-│   ├── Dockerfile               # Construcción de contenedor Docker
-│   └── railway.json             # Configuración de Railway
-├── frontend/                    # Código del frontend (React + Vite)
-│   ├── src/                     # Código fuente TypeScript/React
-│   ├── package.json             # Manifiesto de dependencias Node.js
-│   ├── Dockerfile               # Construcción de contenedor Docker
-│   ├── Caddyfile                # Servidor web en producción
-│   └── railway.json             # Configuración de Railway
-├── docker-compose.yml           # Base de datos PostgreSQL para desarrollo local
-└── README.md                    # Instrucciones iniciales de ejecución
+|-- .github/workflows/build.yml
+|-- backend/
+|   |-- src/main/java/com/notes/backend/
+|   |-- src/main/resources/
+|   |-- src/test/java/com/notes/backend/
+|   |-- Dockerfile
+|   |-- railway.json
+|   |-- pom.xml
+|   |-- .env.example
+|-- frontend/
+|   |-- src/
+|   |-- Dockerfile
+|   |-- Caddyfile
+|   |-- railway.json
+|   |-- package.json
+|   |-- .env.example
+|-- docs/ai/
+|-- docs/despliegue/
+|-- docker-compose.yml
+|-- README.md
 ```
 
-## 3. Stack Tecnológico Confirmado
-* **Backend**:
-  * Java 26 (OpenJDK 26.0.1) `[verificado en documentación]`
-  * Spring Boot 4.1.0 `[verificado en documentación]`
-  * Maven 3.9.16 `[verificado en documentación]`
-  * Spring Security `[verificado en documentación]`
-  * Spring Security OAuth2 Resource Server (validación de JWT, Nimbus JOSE) `[verificado en documentación]`
-  * Spring Data JPA `[verificado en documentación]`
-  * Flyway Migration `[verificado en documentación]`
-  * Spring Boot Actuator `[verificado en documentación]`
-  * Springdoc OpenAPI (v2.6.0, API JSON usada por Scalar en desarrollo) `[verificado en documentacion]`
-  * Scalar API Reference (v0.6.47, en `/docs` para desarrollo) `[verificado en documentación]`
-  * H2 Database (ámbito de test) `[verificado en documentación]`
-* **Frontend**:
-  * React 19.2.7 `[verificado en documentación]`
-  * Vite 8.1.0 `[verificado en documentación]`
-  * TypeScript 6.0.2 `[verificado en documentación]`
-  * Tailwind CSS 3.4.19 `[verificado en documentación]`
-  * TanStack Router 1.170.16 `[verificado en documentación]`
-  * TanStack Query 5.101.2 `[verificado en documentación]`
-  * Zustand 5.0.14 `[verificado en documentación]`
-  * React Hook Form 7.80.0 `[verificado en documentación]`
-  * Zod 4.4.3 `[verificado en documentación]`
-  * Sonner 2.0.7 `[verificado en documentación]`
-  * openapi-fetch 0.17.0 `[verificado en documentación]`
-  * Vitest 4.1.9 y JSDOM `[verificado en documentación]`
-* **Base de Datos**:
-  * PostgreSQL 16 (vía Docker) `[verificado en documentación]`
+## Backend
 
-## 4. Arquitectura por Capas `[inferido]`
-* **Backend**:
-  * `Controller`: Exposición de endpoints REST e integración con Springdoc OpenAPI.
-  * `Service`: Lógica de negocio y transaccionalidad.
-  * `Repository`: Interfaces de Spring Data JPA para persistencia.
-  * `Model`: Entidades JPA.
-  * `DTO`: Objetos de transferencia de datos.
-* **Frontend**:
-  * `Components`: UI reutilizable en `src/components/ui/` y componentes de página.
-  * `Routes`: Enrutamiento de páginas estructurado.
-  * `Store`: Estado global administrado por Zustand.
-  * `API`: Cliente centralizado en `src/lib/api/client.ts` consumiendo endpoints a través de `openapi-fetch`.
-  * `Theme`: Tokens CSS semanticos mapeados en Tailwind, con soporte `.dark`, estados visuales reutilizables, skeletons y utilidades de foco/motion.
+- Lenguaje/runtime: Java 26.
+- Framework: Spring Boot 4.1.0.
+- Build: Maven.
+- Dependencias principales: Spring Web, Spring Security, OAuth2 Resource Server, Spring Data JPA, Validation, Flyway, Actuator, PostgreSQL, H2 para tests.
+- Documentacion API en desarrollo: Springdoc OpenAPI 2.6.0 y Scalar 0.6.47.
+- Paquete base: `com.notes.backend`.
+- Perfil local por defecto: `dev`.
+- Perfil productivo esperado: `prod`.
 
-## 5. Contratos y Convenciones `[inferido]`
-* Nombres de variables y funciones en inglés.
-* Comunicación frontend-backend mediante JSON y cabecera `Authorization: Bearer <token>`.
-* Códigos de estado HTTP estándar (200 OK, 201 Created, 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 500 Internal Error).
+Reglas backend vigentes:
 
-## 6. Seguridad y Permisos
-* Configuración de Spring Security activa `[verificado en documentación]`.
-* Modelo de seguridad persistente (RBAC) `[verificado en Git]`: `User`, `Role`, `Permission`, `RefreshToken` con tablas puente `user_roles` y `role_permissions`.
-* En cada arranque se siembra de forma idempotente el rol `ADMIN` y los permisos base (`USER_READ`, `USER_CREATE`, `USER_UPDATE`, `USER_DISABLE`, `ROLE_READ`, `PERMISSION_READ`), asignándolos todos a `ADMIN` `[verificado en Git]`.
-* Administrador inicial opcional controlado por variables de entorno `INITIAL_ADMIN_ENABLED`, `INITIAL_ADMIN_UPDATE_EXISTING`, `INITIAL_ADMIN_EMAIL`, `INITIAL_ADMIN_USERNAME`, `INITIAL_ADMIN_PASSWORD` `[verificado en Git]`. Si está deshabilitado no se crea ni actualiza; si existe, solo se actualiza cuando `INITIAL_ADMIN_UPDATE_EXISTING=true`.
-* Contraseñas almacenadas con `PasswordEncoder` (BCrypt); nunca en texto plano ni en logs `[verificado en Git]`.
-* Autenticación stateless implementada `[verificado en Git]`:
-  * Endpoints `/api/auth/register|login|refresh|logout|logout-all|me`. `register`, `login` y `refresh` son públicos; el resto requiere Bearer access token.
-  * Access token JWT firmado con HMAC-SHA256, corto (default 15 min). Claims: `sub` (id de usuario), `username`, `email`, `roles`, `permissions`, `iat`, `exp`.
-  * Refresh token opaco de alta entropía, persistido solo como hash SHA-256 (default 7 días). Logout revoca uno; logout-all revoca todos. Un refresh token revocado o expirado no emite nuevos access tokens.
-  * Login acepta email o username; los errores de login son genéricos (no revelan si la cuenta existe). El registro público crea usuarios `enabled` sin rol ADMIN.
-  * El backend actúa como OAuth2 Resource Server; los claims `roles`/`permissions` se mapean a authorities (`ROLE_*` y permisos).
-* Variables JWT: `JWT_SECRET` (≥256 bits), `JWT_EXPIRATION_MS` (access, corto), `JWT_REFRESH_EXPIRATION_MS` (refresh, largo) `[verificado en Git]`.
-* Autorización por permisos explícitos implementada `[verificado en Git]`:
-  * Method security activada (`@EnableMethodSecurity`); los endpoints `/api/admin/**` exigen un permiso concreto con `@PreAuthorize("hasAuthority('...')")`, evaluado desde los claims del access token.
-  * Endpoints admin mínimos: consulta/gestión de usuarios (`USER_READ`, `USER_UPDATE`, `USER_DISABLE`) y consulta de roles (`ROLE_READ`) y permisos (`PERMISSION_READ`).
-  * Sin token → 401; autenticado sin el permiso → 403.
-  * Protección del último administrador: no se puede deshabilitar (ni vía `PATCH enabled=false`) al único admin habilitado (409).
-* CORS configurado en el backend a partir de `app.cors.allowed-origins` (`CORS_ALLOWED_ORIGINS`); permite el origen del frontend para `Authorization` y `Content-Type` `[verificado en Git]`.
-* Frontend de autenticación implementado `[verificado en Git]`:
-  * Login, registro público, panel de usuario y vista `/admin/users`; sesión en Zustand y tokens en `localStorage`.
-  * Cliente `openapi-fetch` con refresh automático ante 401 (una vez) y limpieza de sesión si falla.
-  * Guards de ruta por autenticación y por permiso; los controles admin se ocultan sin permisos. La autorización real permanece en el backend.
-* Autorización en endpoints de negocio (notas) `[pendiente de confirmar]` (iteración posterior).
+- Flyway controla el esquema.
+- `spring.jpa.hibernate.ddl-auto=validate`.
+- En `prod`, Scalar y OpenAPI estan deshabilitados.
+- `/actuator/health` queda disponible sin detalles sensibles.
+- Secrets reales no se versionan.
 
-## 7. Base de Datos y Migraciones
-* PostgreSQL 16 para desarrollo y producción `[verificado en documentación]`.
-* Flyway configurado para migraciones automatizadas en el backend `[verificado en documentación]`.
-* Las migraciones de base de datos se almacenan en `backend/src/main/resources/db/migration/` `[verificado en Git]`. La primera migración es `V1__create_security_schema.sql` (tablas y constraints del modelo de seguridad). El sembrado de datos (rol, permisos, admin) se realiza en el bootstrap de la aplicación, no en SQL, para mantener consistencia con el entorno de test (H2, Flyway deshabilitado).
-* H2 Database en memoria se utiliza para el entorno de pruebas unitarias/integración para evitar depender de una base de datos PostgreSQL real `[verificado en documentación]`.
+## Seguridad Implementada
 
-## 8. Infraestructura y CI/CD
-* **Local**: Docker Compose levanta base de datos PostgreSQL en el puerto 5432 `[verificado en documentación]`.
-* **CI/CD**: GitHub Actions ejecuta pruebas del backend (Java 26, Maven) y frontend (Node 20, npm run build) en cada push o PR a `main` o `master` `[verificado en documentación]`.
-* **Producción**: Configurado para desplegarse en Railway `[verificado en documentación]`.
-  * El backend corre en un contenedor Docker y selecciona entorno mediante `SPRING_PROFILES_ACTIVE`.
-  * El perfil local por defecto es `dev`; el perfil de Railway debe ser `prod`.
-  * Scalar y la documentacion OpenAPI estan habilitados solo en `dev` y deshabilitados en `prod`.
-  * El frontend se compila y se sirve usando Caddy para optimizar el rendimiento de la SPA.
+- `User`, `Role`, `Permission` y `RefreshToken` persistentes.
+- Roles base: `ADMIN` y `USER`.
+- Permisos base definidos en `BasePermission`.
+- Login con email o username.
+- Registro publico con rol `USER`.
+- Access token JWT.
+- Refresh token opaco almacenado como hash.
+- Logout individual y revocacion de sesiones.
+- Bootstrap de administrador inicial controlado por variables.
+- Endpoints administrativos protegidos por permisos.
 
-## 9. Comandos Confirmados
-### Backend `[verificado en documentación]`
-* Ejecutar pruebas: `mvn clean test` (ejecutado desde el directorio `backend/`).
-* Ejecutar en desarrollo: `mvn spring-boot:run` (ejecutado desde el directorio `backend/`; Spring importa `backend/.env` de forma opcional mediante `spring.config.import`; perfil por defecto `dev`).
+## Frontend
 
-### Frontend `[verificado en documentación]`
-* Instalar dependencias: `npm install`
-* Ejecutar en desarrollo: `npm run dev`
-* Compilar aplicación: `npm run build`
-* Ejecutar pruebas: `npm run test`
-* Ejecutar linter: `npm run lint`
+- Framework: React 19 con Vite 8.
+- Lenguaje: TypeScript.
+- UI: Tailwind CSS, componentes propios y lucide-react.
+- Router: TanStack Router.
+- Datos remotos: TanStack Query.
+- Estado de sesion: Zustand.
+- Formularios: React Hook Form y Zod.
+- Notificaciones: Sonner.
+- Cliente HTTP: openapi-fetch.
+- Tests: Vitest y Testing Library.
 
-## 10. Fuentes Canónicas `[verificado en documentación]`
-* [README.md](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/README.md)
-* [backend/pom.xml](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/backend/pom.xml)
-* [frontend/package.json](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/frontend/package.json)
-* [docs/despliegue/RAILWAY_PRODUCCION_GUIA.md](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/docs/despliegue/RAILWAY_PRODUCCION_GUIA.md)
-* [docs/ai/PROJECT_INITIALIZATION_BLUEPRINT.md](file:///c:/Users/crist/OneDrive/Documents/proyects/notes/docs/ai/PROJECT_INITIALIZATION_BLUEPRINT.md)
+Elementos implementados:
 
-## 11. Reglas Críticas `[verificado en documentación]`
-* Nunca versionar credenciales o secretos en texto plano.
-* No utilizar `ddl-auto=update` en entornos productivos.
-* No exponer Scalar ni documentacion OpenAPI en el perfil `prod`.
-* No utilizar `axios` en el frontend; el cliente HTTP oficial es `openapi-fetch`.
-* La UI base debe usar los componentes reutilizables de `frontend/src/components/ui/` para superficies, skeletons, estados de loading/error/vacio, encabezados de pagina, confirmaciones y toasts.
-* Evitar el uso de colores hex literales en componentes; usar las variables CSS mapeadas en Tailwind.
+- Cliente API centralizado en `frontend/src/lib/api/`.
+- Helpers de sesion y permisos en `frontend/src/lib/auth/`.
+- Store de autenticacion en `frontend/src/stores/authStore.ts`.
+- Guards `RequireAuth` y `RequirePermission`.
+- Paginas de login, registro, dashboard y administracion de usuarios.
+- Componentes UI base: botones, inputs, labels, textarea, tarjetas, skeletons, estados loading/empty/error, page header, dialogo de confirmacion y toaster.
 
-## 12. Pendientes de Confirmar
-* Autorización por permisos en endpoints de negocio y, eventualmente, rol no-administrador para usuarios públicos `[pendiente de confirmar]`.
-* Módulo de notas completo (modelo, endpoints y UI) `[pendiente de confirmar]`.
-* Generación del cliente tipado del frontend con `openapi-typescript` (hoy `paths`/`types` se mantienen a mano) `[pendiente de confirmar]`.
+## Variables
+
+- Backend: `backend/.env.example`.
+- Frontend: `frontend/.env.example`.
+- No hay plantilla raiz `.env.example` requerida para el monorepo.
+- Variables reales deben vivir fuera del repo.
+- El frontend solo debe usar valores seguros expuestos con prefijo `VITE_`.
+
+## Despliegue
+
+- Railway esperado con tres servicios: PostgreSQL, backend y frontend.
+- Backend con root directory `backend`.
+- Frontend con root directory `frontend`.
+- Frontend servido como SPA estatica con Caddy.
+- `VITE_API_BASE_URL` se inyecta en build.
+- `CORS_ALLOWED_ORIGINS` debe apuntar al origen exacto del frontend en produccion.
+
+## Comandos
+
+Confirmar desde manifiestos antes de ejecutar:
+
+```bash
+cd backend
+mvn test
+```
+
+```bash
+cd frontend
+npm run lint
+npm run test
+npm run build
+```
+
+## Documentos Canonicos
+
+- `README.md`.
+- `docs/ai/PROJECT_CONTEXT.md`.
+- `docs/ai/MODULE_MAP.md`.
+- `docs/ai/NAMING.md`.
+- `docs/ai/PROJECT_INSTRUCTIONS.md`.
+- `docs/ai/PROJECT_INITIALIZATION_BLUEPRINT.md`.
+- `docs/despliegue/RAILWAY_PRODUCCION_GUIA.md`.
+- `docs/despliegue/VARIABLES_ENTORNO.md`.
+
+## Pendientes Conocidos
+
+- Definir e implementar el dominio funcional de notas.
+- Agregar endpoints y UI del dominio solo cuando se soliciten explicitamente.
+- Mantener el blueprint generico sin nombres de este proyecto ni versiones fijas.

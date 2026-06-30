@@ -1,141 +1,150 @@
 # Notes Fullstack Project
 
-This project is a fullstack notes application built with:
-- **Backend**: Spring Boot (Java 26, Maven, JPA, PostgreSQL, Flyway, Actuator, Security)
-- **Frontend**: React (Vite, TypeScript, Tailwind CSS, TanStack Router, TanStack Query, Zustand, Sonner, openapi-fetch)
-- **Infrastructure**: Docker Compose (PostgreSQL)
+Aplicacion full-stack para notas, organizada como monorepo con backend Spring Boot, frontend React/Vite y PostgreSQL local mediante Docker Compose.
 
-## Project Structure
+## Stack Actual
 
-```
+- Backend: Java 26, Spring Boot 4.1.0, Maven, Spring Web, Spring Security, OAuth2 Resource Server, JPA, PostgreSQL, Flyway, Actuator, Springdoc OpenAPI y Scalar.
+- Frontend: React 19, Vite 8, TypeScript, Tailwind CSS, TanStack Router, TanStack Query, Zustand, React Hook Form, Zod, Sonner y openapi-fetch.
+- Infraestructura: Docker Compose para PostgreSQL local, Dockerfile por servicio y guias Railway.
+
+## Estructura
+
+```text
 /
-├── backend/            # Spring Boot backend
-├── frontend/           # React + Vite frontend
-├── docs/ai/            # AI-targeted documentation
-├── docker-compose.yml  # Docker Compose for PostgreSQL
-└── README.md           # This file
+|-- backend/            # Servicio Spring Boot
+|-- frontend/           # SPA React + Vite
+|-- docs/ai/            # Documentacion canonica para agentes y humanos
+|-- docs/despliegue/    # Guias de despliegue y variables
+|-- docker-compose.yml  # PostgreSQL local
+|-- README.md
 ```
 
-## Reusable Initialization Blueprint
+## Blueprint Reutilizable
 
-This repository also documents a reusable full-stack baseline for future projects in `docs/ai/PROJECT_INITIALIZATION_BLUEPRINT.md`. Use it when starting a new project from the `notes` architecture: monorepo, Spring Boot backend, React/Vite frontend, auth/RBAC/admin baseline, per-service variables, Docker/Railway deployment, and UI foundations.
+El archivo `docs/ai/PROJECT_INITIALIZATION_BLUEPRINT.md` contiene una plantilla generica para iniciar nuevos proyectos full-stack. No depende de este dominio ni fija versiones; el agente debe consultar fuentes oficiales o manifiestos generados al iniciar cada proyecto nuevo.
 
-## Getting Started
+## Requisitos Locales
 
-### Prerequisites
-- Java 26
-- Maven 3.9+
-- Node.js 18+ & npm
-- Docker & Docker Compose
+- Java 26.
+- Maven 3.9+.
+- Node.js 18+ y npm.
+- Docker y Docker Compose.
 
-### 1. Database Setup
-Start the PostgreSQL database using Docker Compose:
+## Base de Datos Local
+
 ```bash
 docker compose up -d
 ```
 
-### 2. Backend Setup
-1. Copy the environment template:
+El contenedor local usa PostgreSQL y los valores por defecto documentados en `backend/.env.example`.
+
+## Backend
+
+1. Copia la plantilla de entorno:
+
    ```bash
    cp backend/.env.example backend/.env
    ```
-   > [!NOTE]
-   > Spring Boot importa `backend/.env` de forma opcional cuando ejecutas Maven desde el directorio `backend/`. Si ejecutas Maven desde otra ubicación o prefieres no depender del archivo, exporta las variables en la sesión de terminal.
-   > Solo se versiona `backend/.env.example`; el archivo real `backend/.env` no debe versionarse.
 
-2. Ejecutar el backend:
+2. Ejecuta el servicio:
 
-   **En PowerShell (Windows):**
-   ```powershell
-   cd backend
-   mvn spring-boot:run
-   ```
-
-   **En Bash (Linux/macOS/Git Bash):**
    ```bash
    cd backend
    mvn spring-boot:run
    ```
 
-   El backend estará disponible en `http://localhost:8080`.
-   La referencia de la API interactiva (Scalar) estará disponible en `http://localhost:8080/docs` (solo en el perfil de desarrollo `dev`).
+El backend queda disponible en `http://localhost:8080`.
 
-### Backend Profiles
-El backend usa `SPRING_PROFILES_ACTIVE` para seleccionar entorno. Si no defines la variable, Spring Boot usa `dev`.
+En perfil `dev`, Scalar queda disponible en:
 
-En `dev`, la documentación de API está habilitada:
 ```text
 http://localhost:8080/docs
 ```
 
-Para forzar desarrollo en PowerShell:
+La especificacion OpenAPI usada por Scalar queda disponible en:
+
+```text
+http://localhost:8080/v3/api-docs
+```
+
+En perfil `prod`, Scalar (`/docs`) y OpenAPI (`/v3/api-docs`) estan deshabilitados. El healthcheck `/actuator/health` sigue disponible sin detalles sensibles.
+
+## Perfiles Backend
+
+Si `SPRING_PROFILES_ACTIVE` no se define, el backend usa `dev`.
+
+Forzar desarrollo en PowerShell:
+
 ```powershell
 $env:SPRING_PROFILES_ACTIVE="dev"
 cd backend
 mvn spring-boot:run
 ```
 
-Para validar comportamiento de producción en PowerShell:
+Validar comportamiento productivo en PowerShell:
+
 ```powershell
 $env:SPRING_PROFILES_ACTIVE="prod"
 cd backend
 mvn spring-boot:run
 ```
 
-En `prod`, Scalar (`/docs`) y la documentacion OpenAPI no deben entregar contenido publico. `/actuator/health` sigue disponible sin detalles sensibles.
+## Frontend
 
-### 3. Frontend Setup
-1. Copy the environment template:
+1. Copia la plantilla de entorno:
+
    ```bash
    cp frontend/.env.example frontend/.env
    ```
-   Solo se versiona `frontend/.env.example`; el archivo real `frontend/.env` no debe versionarse.
-2. Install dependencies and run in development mode:
+
+2. Instala dependencias y ejecuta el modo desarrollo:
+
    ```bash
    cd frontend
    npm install
    npm run dev
    ```
-   El frontend estará disponible en `http://localhost:5173`.
 
----
+El frontend queda disponible en `http://localhost:5173`.
 
-## Diagnóstico y Resolución de Problemas de Conexión (Base de Datos)
+## Comandos de Verificacion
 
-Si al ejecutar el backend obtienes el error `FATAL: la autenticación password falló para el usuario postgres` o problemas de conexión, sigue estos pasos:
+Backend:
 
-### 1. Verificar Alineación de Contraseñas
-La contraseña configurada en `backend/.env` (`SPRING_DATASOURCE_PASSWORD`) **debe coincidir** con la contraseña configurada en `docker-compose.yml` (`POSTGRES_PASSWORD`). Por defecto, ambas son `postgres`.
+```bash
+cd backend
+mvn test
+```
 
-En PowerShell puedes verificar si hay variables de entorno sobrescribiendo el archivo `.env`:
+Frontend:
+
+```bash
+cd frontend
+npm run lint
+npm run test
+npm run build
+```
+
+## Diagnostico de Conexion a Base de Datos
+
+Si el backend reporta error de autenticacion o conexion con PostgreSQL, verifica primero que `SPRING_DATASOURCE_PASSWORD` en `backend/.env` coincida con `POSTGRES_PASSWORD` en `docker-compose.yml`. Por defecto ambos usan `postgres`.
+
+En PowerShell puedes revisar si variables de entorno de la sesion estan sobrescribiendo el archivo `.env`:
+
 ```powershell
 Get-ChildItem Env:SPRING_DATASOURCE*
 ```
 
-Si necesitas exportarlas manualmente para la sesión actual:
-```powershell
-$env:SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/notes"
-$env:SPRING_DATASOURCE_USERNAME="postgres"
-$env:SPRING_DATASOURCE_PASSWORD="postgres"
-```
+Si cambiaste la contrasena despues de crear el volumen local, PostgreSQL puede conservar la anterior. Este comando elimina los datos locales del volumen:
 
-### 2. Recrear el Contenedor y su Volumen (Acción Destructiva)
-Si cambiaste la contraseña en `docker-compose.yml` después de haber creado el contenedor por primera vez, PostgreSQL seguirá usando la contraseña vieja debido al volumen persistente `pgdata`. Resetear el volumen elimina todos los datos locales de la base de datos; hazlo solo si puedes perder esa información:
 ```bash
 docker compose down -v
 docker compose up -d
 ```
 
-### 3. Conflicto de Puerto (Puerto 5432 Ocupado)
-Si tienes una instancia local de PostgreSQL instalada directamente en tu sistema operativo (fuera de Docker), esta podría estar usando el puerto 5432 con una contraseña diferente.
-- **Identificar el proceso en Windows (PowerShell):**
-  ```powershell
-  Get-Process -Id (Get-NetTCPConnection -LocalPort 5432 -ErrorAction SilentlyContinue).OwningProcess -ErrorAction SilentlyContinue
-  ```
-- **Solución**: Detén el servicio de PostgreSQL local o cambia el puerto en `docker-compose.yml` (ej: `"5433:5432"`) y actualiza `SPRING_DATASOURCE_URL` en tu `.env` para apuntar al nuevo puerto.
+Para probar conexion desde el contenedor:
 
-### 4. Probar Conexión Manualmente
-Puedes probar la conexión directa al contenedor PostgreSQL usando `psql` dentro del contenedor:
 ```bash
 docker exec -e PGPASSWORD=postgres -it notes-db psql -h localhost -U postgres -d notes -c "select current_user, current_database();"
 ```
